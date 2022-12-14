@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<job maxFilesPerProcess="1" fileListSyntax="xrootd" filesPerHour="0.25">
+<command>
+<!--stardev-->
+starver SL22b
+cons
+
+<!--root4star -q -b run17pp510_V0.C\(\"$FILELIST\",\"$FILEBASENAME.root\"\,\"$JOBID\"\)\+\+-->
+/usr/bin/time root4star -b -q run17pp510MuDst_GP.C\(\"$INPUTFILE0\",\"RawTree_MuDst.root\"\); 
+</command>
+
+
+<input URL="file:/star/data110/GRID/mudst/pp500_production_2017_physics_P20ic.SL22b/st_physics_18149017_raw_2000027.MuDst.root"/>
+
+
+<stdout URL="file:/star/u/nghimire/scratch/Run17_AUT/Mu_Pico_Compare/log/$FILEBASENAME.log" />
+<stderr URL="file:/star/u/nghimire/scratch/Run17_AUT/Mu_Pico_Compare/err/$FILEBASENAME.err" />
+<output fromScratch="*.root" toURL="file:/star/u/nghimire/scratch/Run17_AUT/Mu_Pico_Compare/" />
+
+<SandBox>
+<Package>
+<File>file:/star/u/nghimire/scratch/Run17_AUT/Mu_Pico_Compare/run17pp510MuDst_GP.C</File>
+<File>file:./StRoot/*/*</File>          <!-- Required StSpinDbMaker in inside StRoot-->
+<File>file:./.sl73_gcc485</File>    <!-- Required -->
+<!--<File>file:/star/u/nghimire/QA/MuDstQAnghimire/QAproblem/Badlist/QAtreeproduction/.sl73_gcc485</File>/--> 
+</Package>
+</SandBox>
+<Generator>
+<Location>./scripts</Location>
+<ReportLocation>./scripts/</ReportLocation>
+
+</Generator>
+</job>
