@@ -161,7 +161,14 @@ void run17pp510MuDst_GP(const char *list, const char *oFile) // interactive mode
     if (!ev)
       continue;
     StEventInfo &evInfo = ev->eventInfo();
-
+    // Adding ranking cut=============
+    StMuPrimaryVertex *vertex = mu->primaryVertex();
+    if (!vertex)
+      continue;
+    Float_t ranking = vertex->ranking();
+    if (ranking < 1e6)
+      continue;
+    // Adding ranking cut=============
     unsigned int fevTime = evInfo.time();
     ;
     StThreeVectorF vertexPos = ev->primaryVertexPosition();
