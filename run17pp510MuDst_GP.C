@@ -18,10 +18,6 @@ StMuDstMaker *maker;
 // void run17pp510MuDst_P(const char* list, const char* oFile, const char* jobid)
 void run17pp510MuDst_GP(const char *list, const char *oFile) // interactive mode
 {
-  // char *filePath="/home/starlib/home/starreco/reco/pp500_production_2011/ReversedFullField/P11id/2011/043/12043045/st_physics_adc_12043045_raw_1510001.MuDst.root";
-  // char * fout = "run11pp500.root";
-  //  char *filePath="/star/data46/reco/productionMinBias/ReversedFullField/P05ia/2004/024/st_physics_5024*.MuDst.root";
-  // char * fout = "Au200_xxx.root";
 
   gROOT->LoadMacro("$STAR/StRoot/StMuDSTMaker/COMMON/macros/loadSharedLibraries.C");
   loadSharedLibraries();
@@ -29,16 +25,15 @@ void run17pp510MuDst_GP(const char *list, const char *oFile) // interactive mode
   gSystem->Load("StDbBroker");
   gSystem->Load("St_db_Maker");
 
-  // some definitions
   // Float_t->F, Int_t->I,Double_t->D, UShort_t ->s,Short_t ->S
   // Define in /StRoot/StMuDSTMaker/COMMON/StMuTrack.h
   const int fMaxHit = 3000;
-
   Int_t ffillNum;
   Int_t fevtNum;
   Int_t frunNum;
   Int_t fspinconfig;
-  Int_t ftrigger;
+  // Int_t ftrigger;
+  vector<int> ftrigger;
   Int_t fmaxpar;
   Int_t fTrackCounter;
   Double_t fVZ;
@@ -59,8 +54,9 @@ void run17pp510MuDst_GP(const char *list, const char *oFile) // interactive mode
   UShort_t fhitsdedx[fMaxHit];
   Double_t fBetaToF[fMaxHit];
   unsigned int fevTime;
-  //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Tree Branch Declearation @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
+  Int_t triggerIds[34];
+  Int_t fMaxTrig;
+  //======================= Tree Branch Declearation ===========================
   TFile *fout = new TFile(oFile, "recreate");
   TTree *ftree = new TTree("ftree", "dihadron ");
 
@@ -68,7 +64,8 @@ void run17pp510MuDst_GP(const char *list, const char *oFile) // interactive mode
   ftree->Branch("ffillNum", &ffillNum, "ffillNum/I");
   ftree->Branch("frunNum", &frunNum, "frunNum/I");
   ftree->Branch("fspinconfig", &fspinconfig, "fspinconfig/I");
-  ftree->Branch("ftrigger", &ftrigger, "ftrigger/I");
+  // ftree->Branch("ftrigger", &ftrigger, "ftrigger/I");
+  ftree->Branch("ftrigger", &ftrigger);
   ftree->Branch("fmaxpar", &fmaxpar, "fmaxpar/I");
   ftree->Branch("fVZ", &fVZ, "fVZ/D");
   ftree->Branch("fvzVpd", &fvzVpd, "fvzVpd/D");
@@ -88,47 +85,9 @@ void run17pp510MuDst_GP(const char *list, const char *oFile) // interactive mode
   ftree->Branch("fhitsdedx", fhitsdedx, "fhitsdedx[fmaxpar]/s");
   ftree->Branch("fBetaToF", fBetaToF, "fBetaToF[fmaxpar]/D");
   ftree->Branch("fevTime", &fevTime, "fevTime/I");
-  //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Trigger Ids @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-  int trigid[34];
-  trigid[0] = 16;
-  trigid[1] = 18;
-  trigid[2] = 20;
-  trigid[3] = 21;
-  trigid[4] = 22;
-  trigid[5] = 23;
-  trigid[6] = 24;
-  trigid[7] = 29;
-  trigid[8] = 30;
-  trigid[9] = 31;
-  trigid[10] = 32;
-  trigid[11] = 34;
-  trigid[12] = 35;
-  trigid[13] = 55;
-  trigid[14] = 56;
-  trigid[15] = 57;
-  trigid[16] = 570001;
-  trigid[17] = 570004;
-  trigid[18] = 570005;
-  trigid[19] = 570006;
-  trigid[20] = 570007;
-  trigid[21] = 570008;
-  trigid[22] = 570015;
-  trigid[23] = 570201;
-  trigid[24] = 570203;
-  trigid[25] = 570204;
-  trigid[26] = 570205;
-  trigid[27] = 570209;
-  trigid[28] = 570214;
-  trigid[29] = 570215;
-  trigid[30] = 570401;
-  trigid[31] = 570402;
-  trigid[32] = 570403;
-  trigid[33] = 570204;
-
-  cout << "OutPut File name is : " << oFile << endl;
+  cout << "----------------OUTPUT File name is------------- : " << oFile << endl;
   //  char file2[512]="";char krappy[256]="valami";
-
   chain = new StChain("StChain");
   chain->SetDebug(0);
 
@@ -140,7 +99,7 @@ void run17pp510MuDst_GP(const char *list, const char *oFile) // interactive mode
 
   St_db_Maker *stDb = new St_db_Maker("StarDb", "MySQL:StarDb");
   StSpinDbMaker *spindb = new StSpinDbMaker;
-  // open database connection for spin configuration
+  //=====================open database connection for spin configuration===================
   const char *database = "mysql://db04.star.bnl.gov:3416/RunLog?timeout=60";
   const char *user = "nghimire";
   const char *pass = "";
@@ -170,7 +129,6 @@ void run17pp510MuDst_GP(const char *list, const char *oFile) // interactive mode
       continue;
     // Adding ranking cut=============
     unsigned int fevTime = evInfo.time();
-    ;
     StThreeVectorF vertexPos = ev->primaryVertexPosition();
     if (fabs(vertexPos.x()) > 1. || fabs(vertexPos.y()) > 1.)
       continue;
@@ -178,29 +136,35 @@ void run17pp510MuDst_GP(const char *list, const char *oFile) // interactive mode
     fspinconfig = spindb->spin8usingBX48(bx48);
     if (fspinconfig != 51 && fspinconfig != 53 && fspinconfig != 83 && fspinconfig != 85)
       continue;
-
-    for (int trig = 0; trig < 34; trig++)
-    {
-      if ((ev->triggerIdCollection().nominal().isTrigger(trigid[trig])))
-        int ftrigger = trigid[trig];
-    }
-    if (ftrigger == 0)
-      continue;
-    // cout << ftrigger << "  ftrigger  "<< endl;
     int frunId = ev->runId();
     StRunInfo &runInfo = ev->runInfo();
-    fill = (int)(runInfo.beamFillNumber(blue));
+    int fill = (int)(runInfo.beamFillNumber(blue));
     int ffillNum = fill;
     int frunNum = ev->runNumber();
     int fevtNum = ev->eventNumber();
     fVZ = vertexPos.z();
 
-    Double_t fvzVpd1 = mu->btofHeader()->vpdVz();
-    if (fvzVpd1 != -999)
+    Double_t fvzVpd = -999;
+    fvzVpd = mu->btofHeader()->vpdVz();
+    // Double_t fvzVpd1 = mu->btofHeader()->vpdVz();
+    // if (fvzVpd1 != -999)
+    //{
+    //   fvzVpd = mu->btofHeader()->vpdVz();
+    //  cout << fvzVpd << "  fvzVpd " << endl;
+    //}
+    vector<unsigned int> TriggerIds = ev->triggerIdCollection().nominal().triggerIds(); // Had trouble when define Vector TriggerIds in the top and try to run the code so I declare it here.
+    // cout << TriggerIds.size()<< " Size of Trigger id "<< endl;
+
+    int fTrigCounter = 0;
+    ftrigger.clear();
+    for (int i = 0; i < TriggerIds.size(); i++)
     {
-      fvzVpd = mu->btofHeader()->vpdVz();
-      // cout << fvzVpd << "  fvzVpd " << endl;
+      triggerIds[fTrigCounter] = TriggerIds.at(i);
+      ftrigger.push_back(TriggerIds.at(i));
+      // cout << ftrigger.at(i) << " TriggerId"<< endl;
+      fTrigCounter++;
     }
+    fMaxTrig = fTrigCounter;
 
     int ntrk = mu->primaryTracks()->GetEntries();
     fTrackCounter = 0;
@@ -217,9 +181,13 @@ void run17pp510MuDst_GP(const char *list, const char *oFile) // interactive mode
       {
         gTrk = track;
       }
+      // cout << fabs(track->dcaGlobal().mag()) << "\t Global DCA\t" << endl;
+      // cout << fabs(track->eta()) << "\t Eta\t" << endl;
+      // cout << gTrk->nHitsFit() << "\t  nHitsFit\t" << endl;
+      // if (fabs(track->eta()) < 1.5 && (gTrk->nHitsFit() > 12) && fabs(track->dcaGlobal().mag()) < 3.)
+      float trackDCA = track->dcaGlobal().mag();
 
-      //	  if(track->flag() < 0) continue;
-      //	  if (fabs(track->eta())<4.0 && track->nHitsFit()>5 && fabs(track->dcaGlobal().mag())< 3.)
+      if (fabs(track->eta()) < 1.5 && gTrk->nHitsFit() > 12 && fabs(trackDCA) < 3.0)
       {
         fpT[fTrackCounter] = track->p().perp();
         fp[fTrackCounter] = track->p().mag();
@@ -238,7 +206,6 @@ void run17pp510MuDst_GP(const char *list, const char *oFile) // interactive mode
         ffitPts[fTrackCounter] = gTrk->nHitsFit();
         fhitsdedx[fTrackCounter] = gTrk->nHitsDedx();
         ffitPtsPoss[fTrackCounter] = gTrk->nHitsPoss();
-
         // cout << track->nHitsFit() << " nHitsFit form Primary "<< gTrk->nHitsFit()<< " nHitsFit form Global"<< endl;
         // cout << track->nHitsDedx() << " nHitsFitDedx form Primary "<< gTrk->nHitsDedx()<< " nHitsFitDedx form Global"<< endl;
         // if ((track->nHitsPoss() - gTrk->nHitsPoss()) != 0)
@@ -259,7 +226,7 @@ void run17pp510MuDst_GP(const char *list, const char *oFile) // interactive mode
     fmaxpar = fTrackCounter;
     if (fmaxpar > 1)
       ftree->Fill();
-    ftrigger = 0;
+    // ftrigger = 0;
   } // event loop
   fout->cd();
   ftree->Write();

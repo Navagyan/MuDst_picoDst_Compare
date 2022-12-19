@@ -6,9 +6,16 @@ void Data_Embed_Comp()
 
     TH1D *hmu_vz = (TH1D *)mu_file->Get("hVZ");
     TH1D *hpico_vz = (TH1D *)pico_file->Get("hVZ");
+    TH1D *hmu_vzVpd = (TH1D *)mu_file->Get("vzVpd");
+    TH1D *hpico_vzVpd = (TH1D *)pico_file->Get("vzVpd");
 
     TH1D *hmu_pT = (TH1D *)mu_file->Get("pT");
     TH1D *hpico_pT = (TH1D *)pico_file->Get("pT");
+    TH1D *hmu_p = (TH1D *)mu_file->Get("p");
+    TH1D *hpico_p = (TH1D *)pico_file->Get("p");
+
+    TH1D *hmu_dca = (TH1D *)mu_file->Get("Dca");
+    TH1D *hpico_dca = (TH1D *)pico_file->Get("Dca");
 
     TH1D *hmu_eta = (TH1D *)mu_file->Get("h_eta");
     TH1D *hpico_eta = (TH1D *)pico_file->Get("h_eta");
@@ -22,18 +29,53 @@ void Data_Embed_Comp()
     TH1D *hmu_fitPtsPoss = (TH1D *)mu_file->Get("h_fitPtsPoss");
     TH1D *hpico_fitPtsPoss = (TH1D *)pico_file->Get("h_fitPtsPoss");
 
+    TH1D *hmu_fitPtsPoss = (TH1D *)mu_file->Get("h_fitPtsPoss");
+    TH1D *hpico_fitPtsPoss = (TH1D *)pico_file->Get("h_fitPtsPoss");
+
+    TH1D *hmu_hitsdedx = (TH1D *)mu_file->Get("h_hitsdedx");
+    TH1D *hpico_hitsdedx = (TH1D *)pico_file->Get("h_hitsdedx");
+
+    TH1D *h_dEdx_p = (TH1D *)mu_file->Get("h_dEdx_p");
+
+    TH1D *hmupT_pos_JP0 = (TH1D *)mu_file->Get("hpT_pos_JP0");
+    TH1D *hpicopT_pos_JP0 = (TH1D *)pico_file->Get("hpT_pos_JP0");
+
+    TH1D *hmupT_pos_JP1 = (TH1D *)mu_file->Get("hpT_pos_JP1");
+    TH1D *hpicopT_pos_JP1 = (TH1D *)pico_file->Get("hpT_pos_JP1");
+
+    TH1D *hmupT_pos_JP2 = (TH1D *)mu_file->Get("hpT_pos_JP2");
+    TH1D *hpicopT_pos_JP2 = (TH1D *)pico_file->Get("hpT_pos_JP2");
+
+    TH1D *hmupT_pos_BHT1_VPD30 = (TH1D *)mu_file->Get("hpT_pos_BHT1_VPD30");
+    TH1D *hpicopT_pos_BHT1_VPD30 = (TH1D *)pico_file->Get("hpT_pos_BHT1_VPD30");
+
+    TH1D *hmupT_pos_BHT3 = (TH1D *)mu_file->Get("hpT_pos_BHT3");
+    TH1D *hpicopT_pos_BHT3 = (TH1D *)pico_file->Get("hpT_pos_BHT3");
+    TH1D *hmupT_pos_Else = (TH1D *)mu_file->Get("hpT_pos_Else");
+    TH1D *hpicopT_pos_Else = (TH1D *)pico_file->Get("hpT_pos_Else");
+
     void plot_diff(TH1D *, TH1D *); // declearation of Function
 
     plot_diff(hmu_vz, hpico_vz);
+    plot_diff(hmu_vzVpd, hpico_vzVpd);
 
+    plot_diff(hmu_dca, hpico_dca);
     plot_diff(hmu_pT, hpico_pT);
-
+    plot_diff(hmu_p, hpico_p);
     plot_diff(hmu_eta, hpico_eta);
-
     plot_diff(hmu_phi, hpico_phi);
 
     plot_diff(hmu_fitPts, hpico_fitPts);
     plot_diff(hmu_fitPtsPoss, hpico_fitPtsPoss);
+    plot_diff(hmu_hitsdedx, hpico_hitsdedx);
+    plot_diff(hmu_hitsdedx, hpico_hitsdedx);
+
+    plot_diff(hmupT_pos_JP0, hpicopT_pos_JP0);
+    plot_diff(hmupT_pos_JP1, hpicopT_pos_JP1);
+    plot_diff(hmupT_pos_JP2, hpicopT_pos_JP2);
+    plot_diff(hmupT_pos_BHT1_VPD30, hpicopT_pos_BHT1_VPD30);
+    plot_diff(hmupT_pos_BHT3, hpicopT_pos_BHT3);
+    plot_diff(hmupT_pos_Else, hpicopT_pos_Else);
 }
 
 plot_diff(TH1D *hdata, TH1D *hembed)
